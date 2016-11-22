@@ -14,8 +14,10 @@ use strict;
 sub encontraLetra{
 	my $arquivo = $_[0];
 	my $trecho = $_[1];
+	my $arquivoUmaLinha = $arquivo;
 	
-	if ($arquivo =~ /[\n\r]Letra:((?:.*)achei(?:.*))/si) {
+	$arquivoUmaLinha =~ tr{\n}{ };
+	if ($arquivoUmaLinha =~ /\sLetra:.*$trecho.*/i) {
 		return ($arquivo);
 	}
 	return 0;
@@ -24,7 +26,7 @@ sub encontraLetra{
 local $/=undef;
 open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
 my $string = <FILE>;
-my $trecho = "achei";
+my $trecho = "BLA BLA BLA oi";
 
 print "Procurando por:$trecho\n";
 my $data = encontraLetra($string,$trecho);
