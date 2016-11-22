@@ -15,9 +15,7 @@ sub encontraData{
 	my $arquivo = $_[0];
 	my ($dia,$mes,$ano);
 	
-	print $arquivo;
 	($dia, $mes, $ano) = ($arquivo =~ /(\d\d)\/(\d\d)\/(\d\d\d\d)/);
-	print "dentro|", $dia, $mes, $ano, "|dentro\n";
 	return ($dia,$mes,$ano);
 }
 
@@ -25,8 +23,6 @@ local $/=undef;
 open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
 my $string = <FILE>;
 
-print "antes|", $string, "|antes\n";
 my @data = encontraData($string);
-print @data, "\n";
-print "depois\n";
+print "Dia: $data[0], Mes: $data[1], Ano: $data[2]";
 close FILE;
