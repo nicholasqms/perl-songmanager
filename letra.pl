@@ -11,18 +11,27 @@
 
 use warnings;
 use strict;
-sub encontraAutor{
+sub encontraLetra{
 	my $arquivo = $_[0];
-	my ($autor);
+	my $trecho = $_[1];
 	
-	($autor) = ($arquivo =~ /[\n\r]Autor:([^\n\r]*)/i)	;
-	return ($autor);
+	if ($arquivo =~ /[\n\r]Letra:((?:.*)achei(?:.*))/si) {
+		return ($arquivo);
+	}
+	return 0;
 }
 
 local $/=undef;
 open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
 my $string = <FILE>;
+my $trecho = "achei";
 
-my $data = encontraAutor($string);
-print "Autor: $data";
+print "Procurando por:$trecho\n";
+my $data = encontraLetra($string,$trecho);
+if ($data) {
+	print "Letra achada: $data";
+}
+else {
+	print "Nao achou\n";
+}
 close FILE;

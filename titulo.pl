@@ -11,18 +11,18 @@
 
 use warnings;
 use strict;
-sub encontraAutor{
+sub encontraTitulo{
 	my $arquivo = $_[0];
-	my ($autor);
+	my ($titulo);
 	
-	($autor) = ($arquivo =~ /[\n\r]Autor:([^\n\r]*)/i)	;
-	return ($autor);
+	($titulo) = ($arquivo =~ /[\n\r]Titulo:([^\n\r]*)/i);
+	return ($titulo);
 }
 
 local $/=undef;
 open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
 my $string = <FILE>;
 
-my $data = encontraAutor($string);
-print "Autor: $data";
+my $data = encontraTitulo($string);
+print "Titulo: $data";
 close FILE;
