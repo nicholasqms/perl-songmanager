@@ -90,10 +90,16 @@ $achados = "";
 			}
 		}
 		if ($tipoPesquisa =~ /t(?:itulo)?/i) {
-			if ($atual=~ /[\w\s]*$procurado[\w\s]*/i) {
-				$achados .= $atual;
+			$atual = encontraTitulo($arquivo);
+			if ($atual=~ /^$procurado$/i) {
+				$achados .= $arquivo;
 				$achados .= "\n";
-			}		
+			}
+			else {
+				if ($atual =~ /[\w\s]*$procurado[\w\s]*/i) {
+					$achados .= "Musica possivel:$atual\n";
+				}
+			}			
 		}
 		if ($tipoPesquisa =~ /p(?:edaço)?/i) {
 			if (encontraLetra($arquivo,$termo1)) {
@@ -119,4 +125,4 @@ $achados = "";
 	print "Encontrados:\n$achados";
 }
 
-pesquisaGlobal("a","Michael");
+pesquisaGlobal("t","wanted dead or alive");
