@@ -11,7 +11,7 @@
 
 use warnings;
 use strict;
-sub encontraLetra{
+sub encontraLetraDupla{
 	my $arquivo = $_[0];
 	my $trecho1 = $_[1];
 	my $trecho2 = $_[2];

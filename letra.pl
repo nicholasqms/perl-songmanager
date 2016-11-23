@@ -16,7 +16,8 @@ sub encontraLetra{
 	my $trecho = $_[1];
 	my $arquivoUmaLinha = $arquivo;
 	
-	$arquivoUmaLinha =~ tr{\n}{ };
+	$arquivoUmaLinha =~ tr{\n\n}{ }; #previne linhas vazias
+	$arquivoUmaLinha =~ tr{\n}{ }; #previne que nao encontre pq pegou palavras em linhas diferentes
 	if ($arquivoUmaLinha =~ /\sLetra:.*$trecho.*/i) {
 		return ($arquivo);
 	}
@@ -26,7 +27,7 @@ sub encontraLetra{
 local $/=undef;
 open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
 my $string = <FILE>;
-my $trecho = "BLA BLA BLA oi";
+my $trecho = "BLA oi";
 
 print "Procurando por:$trecho\n";
 my $data = encontraLetra($string,$trecho);
