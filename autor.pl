@@ -15,7 +15,7 @@ sub encontraAutor{
 	my $arquivo = $_[0];
 	my ($autor);
 	
-	($autor) = ($arquivo =~ /[\n\r]Autor:([^\n\r]*)/i)	;
+	($autor) = ($arquivo =~ /^Autor:([^\n\r]*)/i)	;
 	return ($autor);
 }
 

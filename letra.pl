@@ -25,9 +25,9 @@ sub encontraLetra{
 }
 
 local $/=undef;
-open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
+open FILE, "songs/song5.txt" or die "Couldn't open file: $!";
 my $string = <FILE>;
-my $trecho = "BLA oi";
+my $trecho = "sometimes";
 
 print "Procurando por:$trecho\n";
 my $data = encontraLetra($string,$trecho);

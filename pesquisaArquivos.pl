@@ -17,11 +17,21 @@ sub encontraLetraDupla{
 	my $trecho1 = $_[1];
 	my $trecho2 = $_[2];
 	my $arquivoUmaLinha = $arquivo;
+	my $trechoCompleto;
+	my $aux;
 	
 	$arquivoUmaLinha =~ tr{\n\n}{ };
 	$arquivoUmaLinha =~ tr{\n}{ };
-	if ($arquivoUmaLinha =~ /\sLetra:.*$trecho1.*$trecho2.*/i) {
-		return $arquivo;
+	if ($arquivoUmaLinha =~ /\sLetra:.*($trecho1(.*)$trecho2).*/i) {
+		print length ($2);
+		if (length ($2) < 40) {      #envia o trecho entre as palavras procuradas se nao for grande
+			return $1;
+		}
+		($trechoCompleto) = $arquivoUmaLinha =~ /((?:['\w]+(?:,?\s)){0,6}$trecho1(?:(?:,?\s)['\w]+){0,6})/i; #se nao procura ate mais 7 palavras entre o trecho
+		$trechoCompleto .= " (...) ";
+		($aux) = $arquivoUmaLinha =~ /((?:['\w]+(?:,?\s)){0,6}$trecho2(?:(?:,?\s)['\w]+){0,6})/i;
+		$trechoCompleto .= $aux;
+		return $trechoCompleto;
 	}
 	return 0;
 }
@@ -46,11 +56,13 @@ sub encontraLetra{
 	my $arquivo = $_[0];
 	my $trecho = $_[1];
 	my $arquivoUmaLinha = $arquivo;
+	my $trechoCompleto;
 	
 	$arquivoUmaLinha =~ tr{\n\n}{ };
 	$arquivoUmaLinha =~ tr{\n}{ };
-	if ($arquivoUmaLinha =~ /\sLetra:.*$trecho.*/i) {
-		return 1;
+	if ($arquivoUmaLinha =~ /\sLetra:(.*$trecho.*)/i) {
+		($trechoCompleto) = $1 =~ /((?:['\w]+(?:,?\s)){0,10}$trecho(?:(?:,?\s)['\w]+){0,10})/i; #regex bolado pra copiar um trecho com ate 10 palavras ao redor da palavra achada PODENDO TER VIRGULA
+		return $trechoCompleto;
 	}
 	return 0;
 }
@@ -102,27 +114,37 @@ $achados = "";
 			}			
 		}
 		if ($tipoPesquisa =~ /p(?:edaço)?/i) {
-			if (encontraLetra($arquivo,$termo1)) {
+			$atual = encontraLetra($arquivo,$procurado);
+			if ($atual) {
+				$achados .= "Musica:";
 				$achados .= encontraTitulo($arquivo);
-				$achados .= "\n";
+				$achados .= "\nTrecho:\n$atual\n";
 			}
 		}
 		if ($tipoPesquisa =~ /d(?:upla)?/i) {
-			if (encontraLetraDupla($procurado,$termo1)) {
+			$atual = encontraLetraDupla($arquivo,$procurado,$termo1);
+			if ($atual) {
+				$achados .= "Musica:";
 				$achados .= encontraTitulo($arquivo);
-				$achados .= "\n";
+				$achados .= "\nTrecho:\n$atual\n";
 			}			
 		}
 		if ($tipoPesquisa =~ /L(?:ançamento)?/i) {
-			($dia,$mes,$ano) = encontraAutor($arquivo);#nao uso o dia e o mes pra nada ainda, fica pro futuro
+			($dia,$mes,$ano) = encontraData($arquivo);#nao uso o dia e o mes pra nada ainda, fica pro futuro
 			if ($procurado==$ano) {
 				$achados .= encontraTitulo($arquivo);
 				$achados .= "\n";
 			}			
 		}
 	}
-	print "Procurou por: $procurado\n";
-	print "Encontrados:\n$achados";
+	
+	if ($tipoPesquisa =~ /d(?:upla)?/i) {
+		print "Procurou por: \"$procurado\" e \"$termo1\"\n";
+	}
+	else {
+		print "Procurou por: $procurado\n";
+	}
+	print "$achados";
 }
 
-pesquisaGlobal("t","wanted dead or alive");
+pesquisaGlobal("p","WALK");
