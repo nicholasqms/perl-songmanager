@@ -94,7 +94,6 @@ sub EncontraLetraDupla{
 	$arquivoUmaLinha =~ tr{\n\n}{ };
 	$arquivoUmaLinha =~ tr{\n}{ };
 	if ($arquivoUmaLinha =~ /\sLetra:.*($trecho1(.*)$trecho2).*/i) {
-		print length ($2);
 		if (length ($2) < 40) {      #envia o trecho entre as palavras procuradas se nao for grande
 			return $1;
 		}
@@ -118,65 +117,60 @@ $achados = "";
 		open FILE, $arquivos or die "Couldn't open file: $!";
 		my $arquivo = do {local $/; <FILE>};
 		
-		if ($tipoPesquisa =~ /a(?:utor)?/i) {
-			$atual = EncontraAutor($arquivo);
-			if ($atual=~ /^$procurado$/i) {
-				$achados .= "Musica dele:";
-				$achados .= EncontraTitulo($arquivo);
-				$achados .= "\n";
-			}
-			else {
-				if ($atual =~ /[\w\s]*$procurado[\w\s]*/i) {
-					if (!($achados =~ /[\w\s]*$atual[\w\s]*/i)){
-						$achados .= "Artista possivel:$atual\n";
+		if (!ValidaArquivo($arquivo)){
+			if ($tipoPesquisa =~ /a(?:utor)?/i) {
+				$atual = EncontraAutor($arquivo);        
+				if ($atual=~ /^$procurado$/i) {   #se for exato,devolve todas musicas que forem com o autor exato
+					$achados .= "Musica dele:";
+					$achados .= EncontraTitulo($arquivo);
+					$achados .= "\n";
+				}
+				else {
+					if ($atual =~ /[\w\s]*$procurado[\w\s]*/i) {  #se nao for exato mas ainda acha
+						if (!($achados =~ /[\w\s]*$atual[\w\s]*/i)){  #confere se ja nao sugeriu esse artista antes
+							$achados .= "Artista possivel:$atual\n";
+						}
 					}
 				}
 			}
-		}
-		if ($tipoPesquisa =~ /t(?:itulo)?/i) {
-			$atual = EncontraTitulo($arquivo);
-			if ($atual=~ /^$procurado$/i) {
-				$achados .= $arquivo;
-				$achados .= "\n";
-			}
-			else {
-				if ($atual =~ /[\w\s]*$procurado[\w\s]*/i) {
-					$achados .= "Musica possivel:$atual\n";
+			if ($tipoPesquisa =~ /t(?:itulo)?/i) {
+				$atual = EncontraTitulo($arquivo);
+				if ($atual=~ /^$procurado$/i) {  #exato mostra a musica inteira
+					$achados .= $arquivo;
+					$achados .= "\n";
 				}
-			}			
-		}
-		if ($tipoPesquisa =~ /p(?:edaço)?/i) {
-			$atual = EncontraLetra($arquivo,$procurado);
-			if ($atual) {
-				$achados .= "Musica:";
-				$achados .= EncontraTitulo($arquivo);
-				$achados .= "\nTrecho:\n$atual\n";
+				else {
+					if ($atual =~ /[\w\s]*$procurado[\w\s]*/i) {  #nao exato retorna o titulo
+						$achados .= "Musica possivel:$atual\n";
+					}
+				}			
+			}
+			if ($tipoPesquisa =~ /p(?:edaço)?/i) {
+				$atual = EncontraLetra($arquivo,$procurado);
+				if ($atual) {
+					$achados .= "Musica:";
+					$achados .= EncontraTitulo($arquivo);
+					$achados .= "\nTrecho:\n$atual\n";
+				}
+			}
+			if ($tipoPesquisa =~ /d(?:upla)?/i) {
+				$atual = EncontraLetraDupla($arquivo,$procurado,$termo1);
+				if ($atual) {
+					$achados .= "Musica:";
+					$achados .= EncontraTitulo($arquivo);
+					$achados .= "\nTrecho:\n$atual\n";
+				}			
+			}
+			if ($tipoPesquisa =~ /L(?:ançamento)?/i) {
+				($dia,$mes,$ano) = EncontraData($arquivo);#nao uso o dia e o mes pra nada ainda, fica pro futuro
+				if ($procurado==$ano) {
+					$achados .= EncontraTitulo($arquivo);
+					$achados .= "\n";
+				}			
 			}
 		}
-		if ($tipoPesquisa =~ /d(?:upla)?/i) {
-			$atual = EncontraLetraDupla($arquivo,$procurado,$termo1);
-			if ($atual) {
-				$achados .= "Musica:";
-				$achados .= EncontraTitulo($arquivo);
-				$achados .= "\nTrecho:\n$atual\n";
-			}			
-		}
-		if ($tipoPesquisa =~ /L(?:ançamento)?/i) {
-			($dia,$mes,$ano) = EncontraData($arquivo);#nao uso o dia e o mes pra nada ainda, fica pro futuro
-			if ($procurado==$ano) {
-				$achados .= EncontraTitulo($arquivo);
-				$achados .= "\n";
-			}			
-		}
 	}
-	
-	if ($tipoPesquisa =~ /d(?:upla)?/i) {
-		print "Procurou por: \"$procurado\" e \"$termo1\"\n";
-	}
-	else {
-		print "Procurou por: $procurado\n";
-	}
-	print "$achados";
+	print $achados;
 }
 
 sub AUTOLOAD {

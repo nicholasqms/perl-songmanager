@@ -13,11 +13,29 @@ use warnings;
 use strict;
 use songmanager ':all';
 
-open FILE, "songs/song1.txt" or die "Couldn't open file: $!";
-my $arquivo = do {local $/; <FILE>};
+my ($tipoPesquisa,$procurado,$termo1);
+print "Bem vindo ao Song Manager.\n";
+print "A(utor)-> Pesquisa por um autor. Retorna todas musicas do autor se for exato\n";
+print "T(itulo)-> Pesquisa por um titulo. Retorna a musica inteira se for exato\n";
+print "L(ancamento)-> Pesquisa por um ano de lancamento. Retorna os nomes das musicas\n";
+print "P(edaco)-> Pesquisa por um trecho. Retorna o titulo e um pedaco do trecho achado\n";
+print "D(upla)-> Pesquisa por DOIS trechos desconectados. Retorna o titulo e um pedaco do trecho achado\n";
+print "Digite por extenso ou a primeira letra da opcao desejada:\n";
 
-my $data = EncontraAutor($arquivo);
-print "Autor: $data";
-close FILE;
+$tipoPesquisa = <>;
 
-PesquisaGlobal("p","walk");
+if (!$tipoPesquisa =~ /^[atlpd]/i) {
+	print "Opcao invalida";
+}
+if ($tipoPesquisa =~ /d/i) {
+	print "Digite o primeiro trecho pra buscar:";
+	chomp($procurado = <STDIN>);
+	print "Digite o segundo trecho pra buscar:";
+	chomp($termo1 = <STDIN>);
+	PesquisaGlobal(substr($tipoPesquisa, 0, 1),substr($procurado,0,-1),substr($termo1,0,-1));
+}
+else {
+	print "Digite o que ira buscar:";
+	$procurado = <>;
+	PesquisaGlobal(substr($tipoPesquisa	, 0, 1),substr($procurado,0,-1));
+}
