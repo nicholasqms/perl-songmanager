@@ -9,9 +9,10 @@
 #      Krishynan Shanty
 #      Nicholas Quagliani
 
+package biblioteca;
 use warnings;
 use strict;
-use songmanager ':all';
+use songmanager;
 
 my ($tipoPesquisa,$procurado,$termo1);
 print "Bem vindo ao Song Manager.\n";
